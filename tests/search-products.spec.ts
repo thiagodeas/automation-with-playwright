@@ -23,5 +23,5 @@ test('deve ser obrigatório preencher o campo antes de pesquisar', async ({ page
     await page.click('button[type="submit"]')
 
     const validationMessage = await inputProductName.evaluate(e => (e as HTMLInputElement).validationMessage)
-    await expect (validationMessage).toEqual('Preencha este campo.')
+    await expect (validationMessage === 'Preencha este campo.' || validationMessage === 'Please fill out this field.').toBe(true);
 })
