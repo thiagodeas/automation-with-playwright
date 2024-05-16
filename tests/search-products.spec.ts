@@ -13,7 +13,7 @@ test('deve conseguir pesquisar um produto', async ({ page }) => {
     await target.isVisible()
 })
 
-test.only('deve ser obrigatório preencher o campo antes de pesquisar', async ({ page }) => {
+test('deve ser obrigatório preencher o campo antes de pesquisar', async ({ page }) => {
 
     await page.goto('https://shopping-cart-three-peach.vercel.app/')
 
