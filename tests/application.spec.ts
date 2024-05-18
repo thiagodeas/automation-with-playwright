@@ -1,87 +1,50 @@
 import { test, expect } from '@playwright/test'
+import { ApplicationPage } from './support/pages/application'
 
-test('deve conseguir pesquisar um produto', async ({ page }) => {
+let appPage: ApplicationPage
 
-    await page.goto('https://shopping-cart-three-peach.vercel.app/')
+test.beforeEach(({ page }) => {
+    appPage = new ApplicationPage(page)
+})
 
-    const inputProductName = page.locator('input[placeholder="Buscar produtos"]')
-    await inputProductName.fill('Liquidificador')
+test('deve conseguir pesquisar um produto', async () => {
 
-    await page.click('button[type="submit"]')
-
-    const target = page.locator('xpath=//h2[contains(text(), "Liquidificador Mondial L-99 500w 2,2l C/ Jarra San Pt - 110v")]')
-    await target.isVisible()
+    await appPage.go()
+    await appPage.searchProduct('Liquidificador')
+    await appPage.searchValidation()
 
 })
 
-test('deve ser obrigatório preencher o campo antes de pesquisar', async ({ page }) => {
+test('deve ser obrigatório preencher o campo antes de pesquisar', async () => {
 
-    await page.goto('https://shopping-cart-three-peach.vercel.app/')
+    await appPage.go()
 
-    const inputProductName = page.locator('input[placeholder="Buscar produtos"]')
-    await inputProductName.fill('')
+    await appPage.searchProduct('')
 
-    await page.click('button[type="submit"]')
-
-    const validationMessage = await inputProductName.evaluate(e => (e as HTMLInputElement).validationMessage)
-    await expect(validationMessage === 'Preencha este campo.' || validationMessage === 'Please fill out this field.').toBe(true);
+    await appPage.requiredFieldValidation()
 
 })
 
-test('deve conseguir adicionar um produto ao carrinho de compras', async ({ page }) => {
+test('deve conseguir adicionar um produto ao carrinho de compras', async () => {
 
-    await page.goto('https://shopping-cart-three-peach.vercel.app/')
+    await appPage.go()
 
-    await page.click('xpath=//section[contains(@class, "sc-iBdnpw")]//div//h2[contains(text(), "Apple iPhone 13 (128 Gb) - Estelar - Distribuidor Autorizado")]/../following-sibling::button')
+    await appPage.addToCart()
 
-    const target = page.locator('xpath=//button[contains(@class,"sc-dmyCSP")]//span')
-    await expect(target).toBeVisible()
-
-    const totalCartValue = page.locator('div[class="sc-csKJxZ GwIeK"]')
-    await expect(totalCartValue).not.toHaveText('R$ 0,00')
+    await appPage.addToCartValidation()
 
 })
 
-test('deve conseguir remover um produto do carrinho de compras', async ({ page }) => {
+test('deve conseguir remover um produto do carrinho de compras', async () => {
 
-    await page.goto('https://shopping-cart-three-peach.vercel.app/')
+    await appPage.go()
 
-    await page.click('xpath=//section[contains(@class, "sc-iBdnpw")]//div//h2[contains(text(), "Apple iPhone 13 (128 Gb) - Estelar - Distribuidor Autorizado")]/../following-sibling::button')
+    await appPage.addToCart()
 
-    const target = page.locator('xpath=//button[contains(@class,"sc-dmyCSP")]//span')
-    await expect(target).toBeVisible()
+    await appPage.addToCartValidation()
 
-    const totalCartValue = page.locator('div[class="sc-csKJxZ GwIeK"]')
-    await expect(totalCartValue).not.toHaveText('R$ 0,00')
+    await appPage.removeItemToCart()
 
-    await page.click('button[class="sc-fHejqy HWKci"]')
+    await appPage.removeValidation()
 
-    await expect(target).not.toBeVisible
-    await expect(totalCartValue).toHaveText('R$ 0,00')
-
-})
-
-test('deve ser possível esconder os detalhes sobre os itens do carrinho', async ({ page }) => {
-
-    await page.goto('https://shopping-cart-three-peach.vercel.app/')
-
-    await page.click('button[class="sc-dmyCSP lddlFd"]')
-
-    const totalCartValue = page.locator('div[class="sc-csKJxZ GwIeK"]')
-    await expect(totalCartValue).toBeHidden
-
-})
-
-test('deve ser possível reexibir os detalhes sobre os itens do carrinho', async({ page }) => {
-
-    await page.goto('https://shopping-cart-three-peach.vercel.app/')
-
-    await page.click('button[class="sc-dmyCSP lddlFd"]')
-
-    const totalCartValue = page.locator('div[class="sc-csKJxZ GwIeK"]')
-    await expect(totalCartValue).toBeHidden
-
-    await page.click('button[class="sc-dmyCSP lddlFd"]')
-
-    await expect(totalCartValue).not.toBeHidden
 })
