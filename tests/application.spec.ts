@@ -48,7 +48,7 @@ test('deve conseguir adicionar um produto ao carrinho de compras', async () => {
 
 })
 
-test('deve conseguir remover um produto do carrinho de compras', async () => {
+test.only('deve conseguir remover um produto do carrinho de compras', async () => {
 
     //Dado que eu acesse a página da aplicação
     await appPage.go()

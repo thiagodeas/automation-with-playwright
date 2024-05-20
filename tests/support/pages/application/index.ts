@@ -26,11 +26,13 @@ export class ApplicationPage {
 
     //Criando função que adiciona um produto ao carrinho
     async addToCart () {
+        await this.page.click('.sc-dmyCSP.lddlFd')
         await this.page.click('//section[contains(@class, "sc-iBdnpw")]//div//h2[contains(text(), "Apple iPhone 14 (128 Gb) - Meia Noite - Distribuidor Autorizado")]/../following-sibling::button')
     }
 
     //Criando função que remove um produto do carrinho
     async removeItemToCart() {
+        await this.page.click('.sc-dmyCSP.lddlFd')
         await this.page.click('xpath=//button[contains(@class, "sc-fHejqy") and contains(@class, "HWKci")]')
     }
 
